@@ -29,14 +29,14 @@ struct LoginView: View {
             HStack {
                 Button("Sign Up") {
                     print("Sign up user: \(email), \(password)")
-                    // TODO: Sign up user
+                    authManager.signUp(email: email, password: password)
 
                 }
                 .buttonStyle(.borderedProminent)
 
                 Button("Login") {
                     print("Login user: \(email), \(password)")
-
+                    authManager.signIn(email: email, password: password)
 
                 }
                 .buttonStyle(.bordered)
@@ -47,4 +47,6 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
+        .environment(AuthManager()) 
 }
+
