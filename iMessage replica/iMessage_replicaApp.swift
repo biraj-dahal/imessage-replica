@@ -21,6 +21,9 @@ struct FireChatApp: App {
     var body: some Scene {
         WindowGroup {
             if authManager.user != nil {
+                
+                ChatView()
+                    .environment(authManager)
 
 
                 NavigationStack {
