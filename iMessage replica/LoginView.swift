@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @Environment(AuthManager.self) var authManager
+    @Environment(AuthManager.self) var authManager 
 
     @State private var email: String = ""
     @State private var password: String = ""
@@ -28,6 +28,7 @@ struct LoginView: View {
             .textInputAutocapitalization(.never)
             .padding(40)
 
+
             HStack {
                 Button("Sign Up") {
                     print("Sign up user: \(email), \(password)")
@@ -38,6 +39,7 @@ struct LoginView: View {
 
                 Button("Login") {
                     print("Login user: \(email), \(password)")
+                    // TODO: Login user
                     authManager.signIn(email: email, password: password)
 
                 }
@@ -49,6 +51,5 @@ struct LoginView: View {
 
 #Preview {
     LoginView()
-        .environment(AuthManager()) 
+        .environment(AuthManager())
 }
-
