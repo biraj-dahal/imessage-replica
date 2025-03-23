@@ -4,8 +4,69 @@
 //
 //  Created by Biraj Dahal on 3/14/25.
 //
-
 import SwiftUI
+import Foundation
+
+struct ChatView: View {
+    
+    @State var messageManager: MessageManager
+
+    init(isMocked: Bool = false) {
+        messageManager = MessageManager(isMocked: isMocked)
+    }
+
+    @Environment(AuthManager.self) var authManager
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                    VStack {
+                        ForEach(messageManager.messages) { message in
+                            MessageRow(text: message.text, isOutgoing: authManager.userEmail == message.username)
+                        }
+                    }
+                }
+            .defaultScrollAnchor(.bottom)
+            .safeAreaInset(edge: .bottom) {
+                SendMessageView { messageText in
+                    // TODO: Save message to Firestore
+                    messageManager.sendMessage(text: messageText, username: authManager.userEmail ?? "")
+                }
+            }
+        }
+    }
+}
+
+struct SendMessageView: View {
+    var onSend: (String) -> Void
+
+    @State private var messageText: String = ""
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            TextField("Message", text: $messageText, axis: .vertical)
+                .padding(.leading)
+                .padding(.trailing, 4)
+                .padding(.vertical, 8)
+
+            Button {
+                onSend(messageText)
+                messageText = ""
+            } label: {
+                Image(systemName: "arrow.up.circle.fill")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .bold()
+                    .padding(4)
+            }
+            .disabled(messageText.isEmpty)
+        }
+        .overlay(RoundedRectangle(cornerRadius: 19).stroke(Color(uiColor: .systemGray2)))
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.thickMaterial)
+    }
+}
 
 struct MessageRow: View {
     let text: String
@@ -19,6 +80,7 @@ struct MessageRow: View {
             messageBubble
             if !isOutgoing {
                 Spacer()
+            }
         }
     }
 
@@ -34,42 +96,10 @@ struct MessageRow: View {
             )
             .padding(isOutgoing ? .trailing : .leading, 12)
             .containerRelativeFrame(.horizontal, count: 7, span: 5, spacing: 0, alignment: isOutgoing ? .trailing : .leading)
-}
-
-struct ChatView: View {
-    @State var messageManager: MessageManager
-
-    init(isMocked: Bool = false) {
-        messageManager = MessageManager(isMocked: isMocked)
-    }
-
-    @Environment(AuthManager.self) var authManager
-    
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                    VStack {
-                        ForEach(messageManager.messages) { message in
-                            MessageRow(text: message.text, isOutgoing: authManager.userEmail == message.username)
-                        }
-                    }
-                }
-            .defaultScrollAnchor(.bottom)
-            Text("Welcome to FireChat!")
-                .navigationTitle("Chat")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem {
-                        Button("Sign out") {
-                            authManager.signOut()
-                        }
-                    }
-                }
-        }
     }
 }
 
 #Preview {
-    ChatView(isMocked: true) 
-            .environment(AuthManager(isMocked: true))
+    ChatView(isMocked: true)
+        .environment(AuthManager())
 }
