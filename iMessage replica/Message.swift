@@ -5,6 +5,8 @@
 //  Created by Biraj Dahal on 3/14/25.
 //
 
+import Foundation
+
 struct Message: Hashable, Identifiable, Codable {
     let id: String
     let text: String
