@@ -9,9 +9,9 @@ import SwiftUI
 import FirebaseCore
 
 @main
-struct FireChatApp: App {
+struct ImessageReplica: App {
 
-    @State private var authManager: AuthManager
+    @State private var authManager: AuthManager 
 
     init() {
         FirebaseApp.configure()
@@ -21,23 +21,8 @@ struct FireChatApp: App {
     var body: some Scene {
         WindowGroup {
             if authManager.user != nil {
-                
                 ChatView()
                     .environment(authManager)
-
-
-                NavigationStack {
-                    Text("Welcome to FireChat!")
-                        .navigationTitle("Chat")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            ToolbarItem {
-                                Button("Sign out") {
-                                    authManager.signOut()
-                                }
-                            }
-                        }
-                }
             } else {
 
                 LoginView()
